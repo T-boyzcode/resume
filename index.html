@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeIQ — Intelligent Resume Screening System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2a2a4a;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .logo span { color: #ffffff; }
+
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: #7c3aed; }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(180deg, #16213e 0%, #0f0f1a 100%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: 1px solid #2a2a4a;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            border-color: #7c3aed;
+            color: #7c3aed;
+        }
+
+        /* ── PANELS ── */
+        .panel {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .panel.active { display: block; }
+
+        /* ── CARDS ── */
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ── INPUTS ── */
+        textarea {
+            width: 100%;
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 10px;
+            padding: 16px;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            background: #0f0f1a;
+            border: 2px dashed #2a2a4a;
+            border-radius: 10px;
+            padding: 30px;
+            color: #888;
+            text-align: center;
+            cursor: pointer;
+            display: block;
+        }
+
+        /* ── BUTTON ── */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── RESULTS ── */
+        .results { margin-top: 24px; }
+
+        .result-item {
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .result-item:hover { border-color: #7c3aed; }
+
+        .rank {
+            font-size: 28px;
+            font-weight: 800;
+            color: #7c3aed;
+            min-width: 40px;
+        }
+
+        .result-info { flex: 1; }
+
+        .result-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .result-preview {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .score-badge {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        /* ── SCORE BAR ── */
+        .score-bar-bg {
+            background: #2a2a4a;
+            border-radius: 50px;
+            height: 6px;
+            margin-top: 8px;
+        }
+
+        .score-bar {
+            height: 6px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            transition: width 1s ease;
+        }
+
+        /* ── JOB CARDS ── */
+        .job-card {
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #7c3aed;
+            margin-bottom: 4px;
+        }
+
+        .job-company { color: #aaa; font-size: 14px; }
+        .job-location { color: #666; font-size: 13px; margin-top: 4px; }
+
+        .apply-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid #7c3aed;
+            border-radius: 50px;
+            color: #7c3aed;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .apply-btn:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+        /* ── OPTIMIZER ── */
+        .optimizer-result {
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        /* ── LOADING ── */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7c3aed;
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #2a2a4a;
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #444;
+            font-size: 13px;
+            border-top: 1px solid #2a2a4a;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">Resume<span>IQ</span></div>
+    <nav>
+        <a href="#" onclick="switchTab('screening')">Screening</a>
+        <a href="#" onclick="switchTab('jobsearch')">Job Search</a>
+        <a href="#" onclick="switchTab('optimizer')">Optimizer</a>
+    </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Intelligent Resume Screening</h1>
+    <p>Powered by Sentence-BERT — matching resumes to jobs using deep semantic understanding</p>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('screening')">
+            For Employers
+        </button>
+        <button class="tab" onclick="switchTab('jobsearch')">
+            Find Jobs
+        </button>
+        <button class="tab" onclick="switchTab('optimizer')">
+            Resume Optimizer
+        </button>
+    </div>
+</div>
+
+<!-- ── TAB 1: EMPLOYER SCREENING ── -->
+<div class="panel active" id="panel-screening">
+    <div class="card">
+        <h3>Job Description</h3>
+        <textarea id="jd-input" placeholder="Paste the job description here..."></textarea>
+    </div>
+
+    <div class="card">
+        <h3>Resumes (Optional)</h3>
+        <p style="color:#666; font-size:13px; margin-bottom:12px;">
+            Leave empty to search our database, or paste resume texts below separated by "---"
+        </p>
+        <textarea id="resumes-input" placeholder="Paste resume 1 here
+---
+Paste resume 2 here
+---
+Paste resume 3 here" style="min-height:200px;"></textarea>
+    </div>
+
+    <button class="btn" onclick="runScreening()">
+        Find Best Matches
+    </button>
+
+    <div class="loading" id="loading-screening">
+        <div class="spinner"></div>
+        <p>Analyzing resumes with SBERT...</p>
+    </div>
+
+    <div class="results" id="results-screening"></div>
+</div>
+
+<!-- ── TAB 2: JOB SEARCH ── -->
+<div class="panel" id="panel-jobsearch">
+    <div class="card">
+        <h3>Your Resume</h3>
+        <textarea id="resume-search-input"
+            placeholder="Paste your resume here and we'll find matching job openings..."
+            style="min-height:200px;"></textarea>
+    </div>
+
+    <button class="btn" onclick="runJobSearch()">
+        Find Matching Jobs
+    </button>
+
+    <div class="loading" id="loading-jobsearch">
+        <div class="spinner"></div>
+        <p>Searching live job openings...</p>
+    </div>
+
+    <div class="results" id="results-jobsearch"></div>
+</div>
+
+<!-- ── TAB 3: RESUME OPTIMIZER ── -->
+<div class="panel" id="panel-optimizer">
+    <div class="card">
+        <h3>Your Resume</h3>
+        <textarea id="optimizer-resume"
+            placeholder="Paste your current resume here..."
+            style="min-height:200px;"></textarea>
+    </div>
+
+    <div class="card">
+        <h3>Target Job Description</h3>
+        <textarea id="optimizer-jd"
+            placeholder="Paste the job description you're applying for..."></textarea>
+    </div>
+
+    <button class="btn" onclick="runOptimizer()">
+        Optimize My Resume
+    </button>
+
+    <div class="loading" id="loading-optimizer">
+        <div class="spinner"></div>
+        <p>Claude AI is analyzing and optimizing your resume...</p>
+    </div>
+
+    <div id="optimizer-result"></div>
+</div>
+
+<footer>
+    ResumeIQ — Final Year Project | Delta State University | Powered by Sentence-BERT + Claude AI
+</footer>
+
+<script>
+    // ── BACKEND URL ───────────────────────────────────
+    // Replace this with your ngrok URL from Colab every session
+    const BACKEND_URL = 'https://referee-relax-geriatric.ngrok-free.dev';
+
+    // ── TAB SWITCHING ─────────────────────────────────
+    function switchTab(tab) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('panel-' + tab).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // ── TAB 1: RESUME SCREENING ───────────────────────
+    async function runScreening() {
+        const jd = document.getElementById('jd-input').value.trim();
+        if (!jd) { alert('Please enter a job description'); return; }
+
+        const resumeText = document.getElementById('resumes-input').value.trim();
+        let resumes = [];
+
+        // Split pasted resumes by --- separator
+        if (resumeText) {
+            resumes = resumeText.split('---').map((r, i) => ({
+                name: 'Candidate ' + (i + 1),
+                text: r.trim()
+            })).filter(r => r.text);
+        }
+
+        showLoading('screening');
+
+        try {
+            const response = await fetch(BACKEND_URL + '/match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    job_description: jd,
+                    resumes: resumes
+                })
+            });
+
+            const data = await response.json();
+            displayScreeningResults(data.results);
+        } catch (err) {
+            alert('Error connecting to backend. Make sure Colab is running.');
+        }
+
+        hideLoading('screening');
+    }
+
+    function displayScreeningResults(results) {
+        const container = document.getElementById('results-screening');
+        if (!results || results.length === 0) {
+            container.innerHTML = '<p style="color:#666;text-align:center;">No results found</p>';
+            return;
+        }
+
+        container.innerHTML = results.map(r => `
+            <div class="result-item">
+                <div class="rank">#${r.rank}</div>
+                <div class="result-info">
+                    <div class="result-name">${r.name}</div>
+                    <div class="score-bar-bg">
+                        <div class="score-bar" style="width:${r.score * 100}%"></div>
+                    </div>
+                    <div class="result-preview">${r.preview}...</div>
+                </div>
+                <div class="score-badge">${(r.score * 100).toFixed(1)}%</div>
+            </div>
+        `).join('');
+    }
+
+    // ── TAB 2: JOB SEARCH ────────────────────────────
+    async function runJobSearch() {
+        const resume = document.getElementById('resume-search-input').value.trim();
+        if (!resume) { alert('Please paste your resume'); return; }
+
+        showLoading('jobsearch');
+
+        try {
+            const response = await fetch(BACKEND_URL + '/jobsearch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resume: resume })
+            });
+
+            const data = await response.json();
+            displayJobResults(data.jobs);
+        } catch (err) {
+            alert('Error connecting to backend. Make sure Colab is running.');
+        }
+
+        hideLoading('jobsearch');
+    }
+
+    function displayJobResults(jobs) {
+        const container = document.getElementById('results-jobsearch');
+        if (!jobs || jobs.length === 0) {
+            container.innerHTML = '<p style="color:#666;text-align:center;">No jobs found</p>';
+            return;
+        }
+
+        container.innerHTML = jobs.map(j => `
+            <div class="job-card">
+                <div class="job-title">${j.title}</div>
+                <div class="job-company">${j.company}</div>
+                <div class="job-location">${j.location}</div>
+                <a href="${j.link}" target="_blank" class="apply-btn">Apply Now →</a>
+            </div>
+        `).join('');
+    }
+
+    // ── TAB 3: RESUME OPTIMIZER ───────────────────────
+    async function runOptimizer() {
+        const resume = document.getElementById('optimizer-resume').value.trim();
+        const jd = document.getElementById('optimizer-jd').value.trim();
+
+        if (!resume || !jd) {
+            alert('Please fill in both resume and job description');
+            return;
+        }
+
+        showLoading('optimizer');
+
+        try {
+            const response = await fetch(BACKEND_URL + '/optimize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resume: resume, job_description: jd })
+            });
+
+            const data = await response.json();
+            document.getElementById('optimizer-result').innerHTML =
+                '<div class="optimizer-result">' + data.optimization + '</div>';
+        } catch (err) {
+            alert('Error connecting to backend. Make sure Colab is running.');
+        }
+
+        hideLoading('optimizer');
+    }
+
+    // ── HELPERS ───────────────────────────────────────
+    function showLoading(tab) {
+        document.getElementById('loading-' + tab).style.display = 'block';
+    }
+
+    function hideLoading(tab) {
+        document.getElementById('loading-' + tab).style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
