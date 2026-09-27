@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+# Run this cell to generate the index.html file
+# and save it directly to your Google Drive
+
+html_content = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -580,4 +583,11 @@ Paste resume 3 here" style="min-height:200px;"></textarea>
 </script>
 
 </body>
-</html>
+</html>"""
+
+# Save to Google Drive
+with open('/content/drive/MyDrive/index.html', 'w') as f:
+    f.write(html_content)
+
+print("Website saved to Google Drive!")
+print("Download it from Drive and upload to GitHub Pages")
